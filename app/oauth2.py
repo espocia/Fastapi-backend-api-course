@@ -4,8 +4,10 @@ import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
+from sqlalchemy.orm import Session
 
-from app import schemas
+from app import models, schemas
+from app.database import get_db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -40,9 +42,13 @@ def verify_access_token(token: str, credentails_exeptions):
     return token_data
 
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
     credentails_exeptions = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not verify credentails"
     )
 
-    return verify_access_token(token, credentails_exeptions)
+    token = verify_access_token(token, credentails_exeptions)
+    user = db.query(models.User).filter(models.User.id == token.id).first()
+    return user
