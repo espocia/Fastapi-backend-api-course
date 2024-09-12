@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jwt import InvalidTokenError
+from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
 from app.config import Settings
 
