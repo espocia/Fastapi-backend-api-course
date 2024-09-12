@@ -15,20 +15,6 @@ class UserBase(BaseModel):
     email: EmailStr
     password: str
 
-
-# Post Schemas
-class PostCreate(PostBase):
-    pass
-
-
-class Post(PostBase):
-    create_at: datetime
-    owner_id: int
-
-    class Config:
-        orm_mode = True
-
-
 # User Schemas
 class User(UserBase):
     pass
@@ -57,3 +43,19 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+ 
+# Post Schemas
+class PostCreate(PostBase):
+    pass
+
+
+class Post(PostBase):
+    id: int
+    create_at: datetime
+    owner_id: int
+    owner: UserOut
+
+    class Config:
+        orm_mode = True
+
+
