@@ -23,6 +23,7 @@ class PostCreate(PostBase):
 
 class Post(PostBase):
     create_at: datetime
+    owner_id: int
 
     class Config:
         orm_mode = True
