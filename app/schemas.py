@@ -59,3 +59,17 @@ class Post(PostBase):
         from_attributes = True
 
 
+# Votes Schemas
+class VoteBase(BaseModel):
+    user_id: int
+    post_id: int
+    
+class VoteIn(BaseModel):
+    post_id: int
+    vote_dir: int
+
+
+class VoteOut(VoteBase):
+    pass
+    class Config:
+        from_attributes = True
