@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Response, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app import models, oauth2, schemas, utils
@@ -9,7 +10,7 @@ from app.database import get_db
 router = APIRouter(prefix="/post", tags=["Post"])
 
 
-@router.get("/", response_model=List[schemas.Post])
+@router.get("/", response_model=List[schemas.PostVotesResponse])
 async def get_posts(
     db: Session = Depends(get_db), get_current_user=Depends(oauth2.get_current_user),
     limit: int = 10,
@@ -17,8 +18,15 @@ async def get_posts(
     search: Optional[str] = ""
     
 ):
-    posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(offset).all()
-    return posts
+    results = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
+        models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(
+        models.Post.title.contains(search)).limit(limit).offset(offset)
+    
+    new_results = db.execute(results).mappings().all()
+    print(new_results)
+    
+
+    return new_results
 
 
 @router.get("/{id}", response_model=schemas.Post)
@@ -33,7 +41,7 @@ async def get_post(
     return post
 
 
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
 async def create_posts(
     post: schemas.PostCreate,
     db: Session = Depends(get_db),

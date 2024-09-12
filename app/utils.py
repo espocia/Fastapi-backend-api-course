@@ -11,6 +11,8 @@ def raise_404(message: str):
 def raise_403(message: str):
     raise HTTPException(status.HTTP_403_FORBIDDEN, detail=message)
 
+def raise_409(message: str):
+    raise HTTPException(status.HTTP_409_CONFLICT, detail=message)
 
 def hash(password: str):
     return pwd_context.hash(password)

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, conint
 
 
 # BaseModels
@@ -47,7 +47,7 @@ class TokenData(BaseModel):
 # Post Schemas
 class PostCreate(PostBase):
     pass
-
+    
 
 class Post(PostBase):
     id: int
@@ -58,6 +58,12 @@ class Post(PostBase):
     class Config:
         from_attributes = True
 
+class PostVotesResponse(BaseModel):
+    Post: Post
+    votes: int
+    
+    class Config:
+        from_attributes = True
 
 # Votes Schemas
 class VoteBase(BaseModel):
@@ -66,7 +72,7 @@ class VoteBase(BaseModel):
     
 class VoteIn(BaseModel):
     post_id: int
-    vote_dir: int
+    vote_dir:conint(ge=0, le=1)
 
 
 class VoteOut(VoteBase):
