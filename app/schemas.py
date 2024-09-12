@@ -13,6 +13,7 @@ class PostBase(BaseModel):
 
 class UserBase(BaseModel):
     email: EmailStr
+    phone_number: str
     password: str
 
 # User Schemas
