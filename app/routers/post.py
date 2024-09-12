@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
@@ -6,14 +6,18 @@ from sqlalchemy.orm import Session
 from app import models, oauth2, schemas, utils
 from app.database import get_db
 
-router = APIRouter(prefix="/post", tags=["User"])
+router = APIRouter(prefix="/post", tags=["Post"])
 
 
 @router.get("/", response_model=List[schemas.Post])
 async def get_posts(
-    db: Session = Depends(get_db), get_current_user=Depends(oauth2.get_current_user)
+    db: Session = Depends(get_db), get_current_user=Depends(oauth2.get_current_user),
+    limit: int = 10,
+    offset: int = 0,
+    search: Optional[str] = ""
+    
 ):
-    posts = db.query(models.Post).all()
+    posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(offset).all()
     return posts
 
 

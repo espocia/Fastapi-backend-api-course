@@ -20,7 +20,7 @@ class User(UserBase):
     pass
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserOut(BaseModel):
@@ -29,7 +29,7 @@ class UserOut(BaseModel):
     create_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserLogin(BaseModel):
@@ -56,6 +56,6 @@ class Post(PostBase):
     owner: UserOut
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
